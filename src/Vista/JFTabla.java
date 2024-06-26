@@ -12,27 +12,22 @@ public class JFTabla extends javax.swing.JFrame {
     public JFTabla() {
         initComponents();
         this.setLocationRelativeTo(null);
+        //Mostrar la tabla al ejecutar el programa
         String sql2 = "SELECT * FROM productos";
-
-    try (Connection conn2 = DriverManager.getConnection("jdbc:mysql://localhost:3306/MiBaseDeDatos", "root", "juan10");
-         PreparedStatement pstmt2 = conn2.prepareStatement(sql2)) {
-
-        ResultSet rs = pstmt2.executeQuery();  // Ejecutar la consulta después de preparar el PreparedStatement
-
-        DefaultTableModel modelo = (DefaultTableModel) this.JTProductos.getModel();
-        modelo.setRowCount(0);  // Limpiar la tabla
-
-        while (rs.next()) {
-            Object[] fila = { rs.getString("nombre"), rs.getString("codigo"), rs.getDouble("precio"), rs.getInt("cantidad") };
-            modelo.addRow(fila);
+        try (Connection conn2 = DriverManager.getConnection("jdbc:mysql://localhost:3306/MiBaseDeDatos", "root", "juan10");
+            PreparedStatement pstmt2 = conn2.prepareStatement(sql2)) {
+            ResultSet rs = pstmt2.executeQuery();  // Ejecutar la consulta después de preparar el PreparedStatement
+            DefaultTableModel modelo = (DefaultTableModel) this.JTProductos.getModel();
+            modelo.setRowCount(0);  // Limpiar la tabla
+            while (rs.next()) {
+                Object[] fila = { rs.getString("nombre"), rs.getString("codigo"), rs.getDouble("precio"), rs.getInt("cantidad") };
+                modelo.addRow(fila);
+            }
+            // Cerrar el ResultSet
+            rs.close();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error al cargar productos: " + e.getMessage());
         }
-
-        // Cerrar el ResultSet
-        rs.close();
-
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(null, "Error al cargar productos: " + e.getMessage());
-    }
     }
 
     @SuppressWarnings("unchecked")
@@ -210,87 +205,86 @@ public class JFTabla extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void JBAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBAgregarActionPerformed
-    String sqlInsert = "INSERT INTO productos (nombre, codigo, precio, cantidad) VALUES (?, ?, ?, ?)";
+        String sqlInsert = "INSERT INTO productos (nombre, codigo, precio, cantidad) VALUES (?, ?, ?, ?)";
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/MiBaseDeDatos", "root", "juan10");
+                PreparedStatement pstmtInsert = conn.prepareStatement(sqlInsert)) {
 
-    try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/MiBaseDeDatos", "root", "juan10");
-         PreparedStatement pstmtInsert = conn.prepareStatement(sqlInsert)) {
-        
-        pstmtInsert.setString(1, this.JTFNprod.getText());
-        pstmtInsert.setInt(2, Integer.parseInt(this.JTFCodigo.getText()));
-        pstmtInsert.setDouble(3, Double.parseDouble(this.JTFPrecio.getText()));
-        pstmtInsert.setInt(4, Integer.parseInt(this.JTFCantidad.getText()));
-        pstmtInsert.executeUpdate();
+            pstmtInsert.setString(1, this.JTFNprod.getText());
+            pstmtInsert.setInt(2, Integer.parseInt(this.JTFCodigo.getText()));
+            pstmtInsert.setDouble(3, Double.parseDouble(this.JTFPrecio.getText()));
+            pstmtInsert.setInt(4, Integer.parseInt(this.JTFCantidad.getText()));
+            pstmtInsert.executeUpdate();
 
-        JOptionPane.showMessageDialog(null, "Producto insertado con éxito");
+            JOptionPane.showMessageDialog(null, "Producto insertado con éxito");
 
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(null, "Error al insertar producto: " + e.getMessage());
-    }
-
-    String sql_2 = "SELECT * FROM productos";
-
-    try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/MiBaseDeDatos", "root", "juan10");
-         PreparedStatement pstmt = conn.prepareStatement(sql_2);
-         ResultSet rs = pstmt.executeQuery()) {
-        
-        DefaultTableModel modelo = (DefaultTableModel) this.JTProductos.getModel();
-        modelo.setRowCount(0);  // Limpiar la tabla
-        
-        while (rs.next()) {
-            Object[] fila = { rs.getString("nombre"), rs.getInt("codigo"), rs.getDouble("precio"), rs.getInt("cantidad") };
-            modelo.addRow(fila);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error al insertar producto: " + e.getMessage());
         }
-        
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(null, "Error al cargar productos: " + e.getMessage());
-    }
-    this.JTFCodigo.setText("");
-    this.JTFNprod.setText("");
-    this.JTFPrecio.setText("");
-    this.JTFCantidad.setText("");
+
+        String sql_2 = "SELECT * FROM productos";
+
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/MiBaseDeDatos", "root", "juan10");
+             PreparedStatement pstmt = conn.prepareStatement(sql_2);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            DefaultTableModel modelo = (DefaultTableModel) this.JTProductos.getModel();
+            modelo.setRowCount(0);  // Limpiar la tabla
+
+            while (rs.next()) {
+                Object[] fila = { rs.getString("nombre"), rs.getInt("codigo"), rs.getDouble("precio"), rs.getInt("cantidad") };
+                modelo.addRow(fila);
+            }
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error al cargar productos: " + e.getMessage());
+        }
+        this.JTFCodigo.setText("");
+        this.JTFNprod.setText("");
+        this.JTFPrecio.setText("");
+        this.JTFCantidad.setText("");
     }//GEN-LAST:event_JBAgregarActionPerformed
 
     private void JBActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBActualizarActionPerformed
- String sqlUpdate = "UPDATE productos SET nombre = ?, precio = ?, cantidad = ? WHERE codigo = ?";
+        String sqlUpdate = "UPDATE productos SET nombre = ?, precio = ?, cantidad = ? WHERE codigo = ?";
 
-    try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/MiBaseDeDatos", "root", "juan10");
-         PreparedStatement pstmt = conn.prepareStatement(sqlUpdate)) {
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/MiBaseDeDatos", "root", "juan10");
+            PreparedStatement pstmt = conn.prepareStatement(sqlUpdate)) {
 
-        // Obtener los valores de los campos de la interfaz gráfica
-        String nombre = this.JTFNprod.getText();
-        double precio = Double.parseDouble(this.JTFPrecio.getText());
-        long cantidad = Long.parseLong(this.JTFCantidad.getText());
-        String codigo = this.JTFCodigo.getText();
+            // Obtener los valores de los campos de la interfaz gráfica
+            String nombre = this.JTFNprod.getText();
+            double precio = Double.parseDouble(this.JTFPrecio.getText());
+            long cantidad = Long.parseLong(this.JTFCantidad.getText());
+            String codigo = this.JTFCodigo.getText();
 
-        // Establecer los valores de los parámetros en la consulta SQL
-        pstmt.setString(1, nombre);
-        pstmt.setDouble(2, precio);
-        pstmt.setLong(3, cantidad);
-        pstmt.setString(4, codigo);
+            // Establecer los valores de los parámetros en la consulta SQL
+            pstmt.setString(1, nombre);
+            pstmt.setDouble(2, precio);
+            pstmt.setLong(3, cantidad);
+            pstmt.setString(4, codigo);
 
-        // Ejecutar la actualización
-        int rowsUpdated = pstmt.executeUpdate();
-        if (rowsUpdated > 0) {
-            JOptionPane.showMessageDialog(null, "Producto actualizado con éxito");
-        } else {
-            JOptionPane.showMessageDialog(null, "No se encontró un producto con el código especificado");
-        }
+            // Ejecutar la actualización
+            int rowsUpdated = pstmt.executeUpdate();
+            if (rowsUpdated > 0) {
+                JOptionPane.showMessageDialog(null, "Producto actualizado con éxito");
+            } else {
+                JOptionPane.showMessageDialog(null, "No se encontró un producto con el código especificado");
+            }
 
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(null, "Error al actualizar producto: " + e.getMessage());
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(null, "Error en el formato de los datos: " + e.getMessage());
-    }
-    
-    java.awt.event.ActionEvent actionEvent = new java.awt.event.ActionEvent(evt.getSource(), java.awt.event.ActionEvent.ACTION_PERFORMED, "EnterKey");
-            this.JBLeerActionPerformed(actionEvent);
+       } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error al actualizar producto: " + e.getMessage());
+       } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Error en el formato de los datos: " + e.getMessage());
+       }
+
+       java.awt.event.ActionEvent actionEvent = new java.awt.event.ActionEvent(evt.getSource(), java.awt.event.ActionEvent.ACTION_PERFORMED, "EnterKey");
+               this.JBLeerActionPerformed(actionEvent);
     }//GEN-LAST:event_JBActualizarActionPerformed
 
     private void JBEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBEliminarActionPerformed
 String sql = "DELETE FROM productos WHERE codigo = ?";
         
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/MiBaseDeDatos", "root", "juan10");
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
             pstmt.setString(1, this.JTFCodigo.getText());
             pstmt.executeUpdate();
@@ -310,25 +304,25 @@ String sql = "DELETE FROM productos WHERE codigo = ?";
     }//GEN-LAST:event_JBSalirActionPerformed
 
     private void JBLeerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBLeerActionPerformed
-    String sql2 = "SELECT * FROM productos";
+        String sql2 = "SELECT * FROM productos";
 
-    try (Connection conn2 = DriverManager.getConnection("jdbc:mysql://localhost:3306/MiBaseDeDatos", "root", "juan10");
-         PreparedStatement pstmt2 = conn2.prepareStatement(sql2)) {
+        try (Connection conn2 = DriverManager.getConnection("jdbc:mysql://localhost:3306/MiBaseDeDatos", "root", "juan10");
+            PreparedStatement pstmt2 = conn2.prepareStatement(sql2)) {
 
-        ResultSet rs = pstmt2.executeQuery();  // Ejecutar la consulta después de preparar el PreparedStatement
+            ResultSet rs = pstmt2.executeQuery();  // Ejecutar la consulta después de preparar el PreparedStatement
 
-        DefaultTableModel modelo = (DefaultTableModel) this.JTProductos.getModel();
-        modelo.setRowCount(0);  // Limpiar la tabla
+            DefaultTableModel modelo = (DefaultTableModel) this.JTProductos.getModel();
+            modelo.setRowCount(0);  // Limpiar la tabla
 
-        while (rs.next()) {
-            Object[] fila = { rs.getString("nombre"), rs.getString("codigo"), rs.getDouble("precio"), rs.getInt("cantidad") };
-            modelo.addRow(fila);
-        }
-        // Cerrar el ResultSet
-        rs.close();
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(null, "Error al cargar productos: " + e.getMessage());
-    }    
+            while (rs.next()) {
+                Object[] fila = { rs.getString("nombre"), rs.getString("codigo"), rs.getDouble("precio"), rs.getInt("cantidad") };
+                modelo.addRow(fila);
+            }
+            // Cerrar el ResultSet
+            rs.close();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error al cargar productos: " + e.getMessage());
+        }    
     }//GEN-LAST:event_JBLeerActionPerformed
 
     /**

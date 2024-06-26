@@ -124,14 +124,14 @@ public class JFLogin extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void JBCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBCancelarActionPerformed
-System.exit(0);        // TODO add your handling code here:
+        System.exit(0);
     }//GEN-LAST:event_JBCancelarActionPerformed
 
     private void JBAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBAceptarActionPerformed
-if ((this.JTFUsuario.getText().equals("Martín"))&&
-        (Arrays.equals(this.JTFContrasena.getPassword(),new char[]{'7','7','7'}))){ //Login.
-    this.setVisible(false);
-     Connection C = null;
+        if ((this.JTFUsuario.getText().equals("Martín"))&&
+                (Arrays.equals(this.JTFContrasena.getPassword(),new char[]{'7','7','7'}))){ //Login
+            this.setVisible(false);
+            Connection C = null;
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver");
                 C = DriverManager.getConnection("jdbc:mysql://localhost:3306/MiBaseDeDatos", "root", "juan10");
@@ -148,13 +148,12 @@ if ((this.JTFUsuario.getText().equals("Martín"))&&
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(null, "Error al conectar con la base de datos");
             }
-}else{
-    JOptionPane.showMessageDialog(null,"Usuario o contraseña incorrectos, ingrese nuevamente");
-    this.JTFUsuario.grabFocus();
-    this.JTFUsuario.setText("");
-    this.JTFContrasena.setText("");
-
-}        // TODO add your handling code here:
+        }else{
+            JOptionPane.showMessageDialog(null,"Usuario o contraseña incorrectos, ingrese nuevamente");
+            this.JTFUsuario.grabFocus();
+            this.JTFUsuario.setText("");
+            this.JTFContrasena.setText("");
+        }
     }//GEN-LAST:event_JBAceptarActionPerformed
 
     /**
